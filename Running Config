@@ -1,0 +1,350 @@
+Building configuration...
+
+Current configuration : 5781 bytes
+!
+! Last configuration change at 20:32:14 UTC Mon Aug 15 2022 by admin
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname CiscoRouter891-24x
+!
+boot-start-marker
+boot-end-marker
+!
+!
+logging buffered 51200 warnings
+enable secret 5 .
+!
+aaa new-model
+!
+!
+aaa authentication login local_access local
+!
+!
+!
+!
+!
+aaa session-id common
+bsd-client server url https://cloudsso.cisco.com/as/token.oauth2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 10.10.10.1 10.10.10.10
+!
+ip dhcp pool 10
+ network 10.10.10.0 255.255.255.0
+ default-router 10.10.10.1 
+ dns-server 8.8.8.8 8.8.4.4 
+!
+!
+!
+ip domain name ciscorouter.home
+ip name-server 8.8.8.8
+ip name-server 8.8.4.4
+ip cef
+no ipv6 cef
+!
+!
+flow record nbar-appmon
+ match ipv4 source address
+ match ipv4 destination address
+ match application name
+ collect interface output
+ collect counter bytes
+ collect counter packets
+ collect timestamp absolute first
+ collect timestamp absolute last
+!
+!
+flow monitor application-mon
+ cache timeout active 60
+ record nbar-appmon
+!
+parameter-map type inspect global
+ max-incomplete low 18000
+ max-incomplete high 20000
+ nbar-classify
+!
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+cts logging verbose
+license udi pid C891-24X/K9 sn FGL2016246G
+!
+!
+object-group service INTERNAL_UTM_SERVICE 
+!
+object-group network local_cws_net 
+!
+object-group network local_lan_subnets 
+ any
+!
+object-group network vpn_remote_subnets 
+ any
+!
+username admin privilege 15 secret 5 .
+!
+!
+!
+!
+no cdp run
+!
+!
+class-map type inspect match-any INTERNAL_DOMAIN_FILTER
+ match protocol msnmsgr
+ match protocol ymsgr
+zone security LAN
+zone security WAN
+zone security VPN
+zone security DMZ
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description Uplink Port To Home Router
+ ip address 192.168.0.10 255.255.255.0
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet1/1
+ description Computer
+ switchport access vlan 10
+ no ip address
+ speed 1000
+ spanning-tree portfast
+!
+interface GigabitEthernet1/2
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/3
+ description Phone
+ switchport access vlan 10
+ no ip address
+ speed 1000
+ spanning-tree portfast
+!
+interface GigabitEthernet1/4
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/5
+ description Kali Box
+ switchport access vlan 10
+ no ip address
+ speed 1000
+ spanning-tree portfast
+!
+interface GigabitEthernet1/6
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/7
+ description Raspberry Pi
+ switchport access vlan 10
+ no ip address
+ speed 1000
+ spanning-tree portfast
+!
+interface GigabitEthernet1/8
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/9
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/10
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/11
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/12
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/13
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/14
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/15
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/16
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/17
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/18
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/19
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/20
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/21
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/22
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/23
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/24
+ switchport access vlan 20
+ no ip address
+ shutdown
+!
+interface Vlan1
+ description $ETH_LAN$
+ ip address 10.0.0.1 255.255.255.0
+ ip tcp adjust-mss 1452
+!
+interface Vlan10
+ description Personal VLAN
+ ip address 10.10.10.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+no ip http secure-server
+!
+!
+ip nat inside source list 10 interface GigabitEthernet0/0 overload
+ip nat inside source static tcp 10.10.10.2 22 192.168.0.10 3389 extendable
+ip nat inside source static tcp 10.10.10.2 5900 192.168.0.10 5900 extendable
+ip route 0.0.0.0 0.0.0.0 192.168.0.1
+ip route 10.10.10.0 255.255.255.0 192.168.0.1
+ip route 192.168.0.0 255.255.255.0 192.168.0.1
+!
+ip access-list extended nat-list
+ permit ip object-group local_lan_subnets any
+!
+!
+access-list 10 permit 192.168.0.0 0.0.0.255
+access-list 10 permit 10.10.10.0 0.0.0.255
+!
+!
+!
+control-plane
+!
+!
+!
+mgcp behavior rsip-range tgcp-only
+mgcp behavior comedia-role none
+mgcp behavior comedia-check-media-src disable
+mgcp behavior comedia-sdp-force disable
+!
+mgcp profile default
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+ login authentication local_access
+ no modem enable
+line aux 0
+line vty 0 4
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ login authentication local_access
+ terminal-type monitor
+ transport input ssh
+line vty 5 15
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ login authentication local_access
+ terminal-type monitor
+ transport input ssh
+!
+scheduler allocate 20000 1000
+!
+end
+
+
