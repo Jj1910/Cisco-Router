@@ -1,0 +1,281 @@
+Helpful Commands over SSH:
+Term len 0
+Term monitor
+debug ip icmp detail
+debug ip packet detail
+
+Hostname:
+
+yourname#conf t
+
+yourname(config)#hostname CiscoRouter891-24x
+
+CiscoRouter891-24x(config)#
+
+Encrypt Passwords:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#service password-encryption
+
+CiscoRouter891-24x(config)#exit
+
+Set SSH Access and Console Access:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#line con 0 (Console Connection)
+
+CiscoRouter891-24x(config-line)#no login local (Won’t require username and password when using console cable)
+
+CiscoRouter891-24x(config-line)#logging synchronous (Won’t keep wiping out what you type with the logs)
+
+CiscoRouter891-24x(config-line)#exec-timeout 0 0 (Won’t Time out)
+
+CiscoRouter891-24x(config)#line vty 0 15 (Virtual Connections)
+
+CiscoRouter891-24x(config-line)#transport input ssh (Only allow ssh)
+
+CiscoRouter891-24x(config-line)#no access-class 23 in (Disables default rule of only allowing 10.10.10.0/29 ip to connect)
+
+CiscoRouter891-24x(config-line)#logging synchronous
+
+CiscoRouter891-24x(config-line)#exec-timeout 0 0
+
+Set Username and Password for SSH Access:
+
+CiscoRouter891-24x(config)#username admin  privilege 15 secret 0 *Password Here* (Sets username and password with highest privilege level)
+
+CiscoRouter891-24x(config)#no username cisco (Removes default username and password)
+
+CiscoRouter891-24x(config)#exit
+
+Set Enable Password:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#enable secret *Password Here*
+
+Administratively Disable Non-Used Ports:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#interface GigabitEthernet 0/1 (WAN Port 2)
+
+CiscoRouter891-24x(config-if)#shutdown
+
+CiscoRouter891-24x(config-if)#exit
+
+CiscoRouter891-24x(config)#interface range GigabitEthernet 1/1 - 24
+
+CiscoRouter891-24x(config-if-range)#shutdown
+
+CiscoRouter891-24x(config-if-range)#exit
+
+CiscoRouter891-24x(config)#
+
+Remove Banners:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#no banner login
+
+CiscoRouter891-24x(config)#no banner exec
+
+CiscoRouter891-24x(config)#exit
+
+Enable Access to HTTP Console:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#no ip http access-class
+
+CiscoRouter891-24x(config)#exit
+
+Enable Local Login for Security:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#line con 0 
+
+CiscoRouter891-24x(config-line)#login local
+
+Configure Wan (Home Network) Port:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#int gigabitEthernet 0/0
+
+CiscoRouter891-24x(config-if)#ip address 192.168.0.10 255.255.255.0
+
+CiscoRouter891-24x(config-if)#ip nat outside
+
+CiscoRouter891-24x(config-if)#no shut
+
+CiscoRouter891-24x(config-if)#exit
+
+Set Routes:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#ip route 0.0.0.0 0.0.0.0 192.168.0.1
+
+CiscoRouter891-24x(config)#ip route 10.10.10.0 255.255.255.0 192.168.0.1
+
+CiscoRouter891-24x(config)#exit
+
+Enable DNS Lookup:
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#ip domain lookup
+
+CiscoRouter891-24x(config)#exit
+
+Set DNS Server:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#ip name-server 8.8.8.8
+
+CiscoRouter891-24x(config)#ip name-server 8.8.4.4
+
+Disable HTTPS (No CA at Home\in Lab):
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#no ip http secure-server
+
+CiscoRouter891-24x(config)#exit
+
+Disable HTTP Timeout:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#no ip http timeout-policy idle
+
+CiscoRouter891-24x(config)#exit
+
+Set Domain Name:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#ip domain name ciscorouter.home
+
+CiscoRouter891-24x(config)#exit
+
+CiscoRouter891-24x#
+
+Create VLAN:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#vlan 10
+
+CiscoRouter891-24x(config-vlan)#name Personal
+
+CiscoRouter891-24x(config-vlan)#exit
+
+Assign VLANs:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#int GigabitEthernet 1/3
+
+CiscoRouter891-24x(config-if)#switchport mode access
+
+CiscoRouter891-24x(config-if)#switchport access vlan 10
+
+CiscoRouter891-24x(config-if)#no shut
+
+CiscoRouter891-24x(config-if)#exit
+
+CiscoRouter891-24x(config)#int GigabitEthernet 1/1
+
+CiscoRouter891-24x(config-if)#switchport mode access
+
+CiscoRouter891-24x(config-if)#switchport access vlan 10
+
+CiscoRouter891-24x(config-if)#no shut
+
+CiscoRouter891-24x(config-if)#exit
+
+Take Other Ports off Vlan 1:
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#vlan 20
+
+CiscoRouter891-24x(config-vlan)#name Disabled
+
+CiscoRouter891-24x(config-vlan)#exit
+
+CiscoRouter891-24x(config)#int GigabitEthernet 1/2
+
+CiscoRouter891-24x(config-if)#switchport mode access
+
+CiscoRouter891-24x(config-if)#switchport access vlan 20
+
+CiscoRouter891-24x(config-if)#shut
+
+CiscoRouter891-24x(config-if)#exit
+
+CiscoRouter891-24x(config)#int range GigabitEthernet 1/4-24
+
+CiscoRouter891-24x(config-if-range)#switchport mode access
+
+CiscoRouter891-24x(config-if-range)#switchport access vlan 20
+
+CiscoRouter891-24x(config-if-range)#shut
+
+CiscoRouter891-24x(config-if-range)#exit
+
+Set VLAN Configuration:
+
+CiscoRouter891-24x(config)#int vlan 10
+
+CiscoRouter891-24x(config-if)#ip address 10.10.10.1 255.255.255.0
+CiscoRouter891-24x(config-if)#ip nat inside
+
+CiscoRouter891-24x(config-if)#exit
+
+CiscoRouter891-24x(config)#
+
+Set DCHP Configuration:
+
+CiscoRouter891-24x(config)#ip routing
+
+CiscoRouter891-24x#conf t
+
+CiscoRouter891-24x(config)#ip dhcp pool 10
+
+CiscoRouter891-24x(dhcp-config)#network 10.10.10.0 255.255.255.0
+
+CiscoRouter891-24x(dhcp-config)#default-router 10.10.10.1
+
+CiscoRouter891-24x(dhcp-config)#dns-server 8.8.8.8 8.8.4.4
+
+CiscoRouter891-24x(dhcp-config)#exit
+
+CiscoRouter891-24x(config)#
+
+Set Access Control List for VLANs and Home Network Communication:
+
+CiscoRouter891-24x(config)#ip access-list standard 10
+
+CiscoRouter891-24x(config-std-nacl)#permit 192.168.0.0 0.0.0.255
+
+CiscoRouter891-24x(config-std-nacl)#permit 10.10.10.0 0.0.0.255
+
+CiscoRouter891-24x(config-std-nacl)#
+
+CiscoRouter891-24x(config-std-nacl)#exit
+
+CiscoRouter891-24x(config)#ip nat inside source list 10 interface GigabitEthernet 0/0 overload
+
+Configure SSH-Key Pair Access:
+
+Conf t
+
+username WINDOWS_USER
+
+Key-string
